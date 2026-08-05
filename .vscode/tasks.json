@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"label": "Deploy to ABAP ",
+			"script": "deploy",
+			"options": {
+				"cwd": "/home/user/projects/zmesconfmass"
+			}
+		},
+		{
+			"type": "npm",
+			"label": "build",
+			"script": "build"
+		}
+	]
+}
