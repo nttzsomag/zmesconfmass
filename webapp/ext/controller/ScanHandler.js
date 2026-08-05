@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/m/MessageBox"
 ], function (Dialog, Input, Button, MessageToast, MessageBox) {
     "use strict";
-
+//klnlkhnk
     return {
         onScanBarcode: function (aContexts) {
             var oSessionContext = Array.isArray(aContexts) ? aContexts[0] : aContexts;
