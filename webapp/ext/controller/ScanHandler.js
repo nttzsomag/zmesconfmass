@@ -145,7 +145,7 @@ sap.ui.define([
 
             resolveEquipment(oSessionContext, oModel).then(function (sEquipmentId) {
                 if (sEquipmentId === null) {
-                    // user Mégse-t nyomott a gép-választó dialóguson - ne folytatódjon a scan
+                    // user Mégse-t nyomott a gép-választó dialóguson - ne folytatódjon a scan v
                     return;
                 }
                 // sEquipmentId lehet undefined (nincs gép rendelve) - egyelőre engedjük tovább

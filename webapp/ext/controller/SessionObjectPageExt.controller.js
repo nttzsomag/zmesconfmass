@@ -81,7 +81,7 @@ sap.ui.define([
                     });
                 });
 
-                // Vízvágás köztes állapot: törlés/scan gombok tiltása
+                // Vízvágás köztes állapot: törlés/scan gombok tiltása v
                 var bLockListActions = bIsWaterjet && bWaterjetStarted;
                 console.log("[ListLock] bLockListActions:", bLockListActions);
 
