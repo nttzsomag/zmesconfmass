@@ -7,13 +7,27 @@
     "applicationVersion": {
       "version": "0.0.1"
     },
-    "title": "{{appTitle}}",
-    "description": "{{appDescription}}",
+    "title": "Tömeges gyártás lejelentés",
+    "description": "Tömeges gyártás lejelentés",
     "resources": "resources.json",
     "sourceTemplate": {
       "id": "@sap/generator-fiori:feop",
       "version": "1.29.0",
       "toolsId": "1bd34af4-29d1-47ca-b667-663055c9d044"
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "ZmesMassConf-confirm": {
+          "semanticObject": "ZmesMassConf",
+          "action": "manage",
+          "title": "Tömeges gyártás lejelentés",
+          "subTitle": "Tömeges gyártás lejelentés",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     },
     "dataSources": {
       "annotation": {

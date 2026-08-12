@@ -43,15 +43,19 @@ sap.ui.define([
             Promise.all([
                 oContext.requestProperty(aFlagNames),
                 oTable.initialized(),
-                this._getWaterjetStarted(oContext)
+                this._getOperationsState(oContext)
             ]).then(function (aResults) {
-                console.log("[ButtonVisibility] flags loaded, table initialized, waterjet state resolved");
+                console.log("[ButtonVisibility] flags loaded, table initialized, operations state resolved");
 
-                var bWaterjetStarted = aResults[2];
+                var oOpsState = aResults[2];
+                var bListEmpty = oOpsState.isEmpty;
+                var bWaterjetStarted = oOpsState.waterjetStarted;
+                var bSterilizationOpen = oOpsState.sterilizationOpen;
                 var bIsWaterjet = oContext.getProperty("IsWaterjet") === "X";
+                var bIsSterilization = oContext.getProperty("IsSterilization") === "X";
 
                 var mVisibility = {
-                    "confirmSterilization": oContext.getProperty("IsSterilization") === "X",
+                    "confirmSterilization": bIsSterilization,
                     "confirmAnodizing": oContext.getProperty("IsAnodizing") === "X",
                     "confirmLaserMarking": oContext.getProperty("IsLaserMarking") === "X",
                     "confirmManualOp": oContext.getProperty("IsManualOp") === "X",
@@ -62,6 +66,7 @@ sap.ui.define([
                 };
 
                 console.log("[ButtonVisibility] computed visibility:", JSON.stringify(mVisibility));
+                console.log("[ButtonVisibility] bListEmpty:", bListEmpty);
 
                 var aAllActionButtons = oTable.findAggregatedObjects(true, function (oControl) {
                     return oControl.getId && oControl.getId().indexOf("DataFieldForAction") > -1;
@@ -78,12 +83,21 @@ sap.ui.define([
                     aButtons.forEach(function (oButton) {
                         console.log("[ButtonVisibility] setting", oButton.getId(), "visible =", mVisibility[sActionName]);
                         oButton.setVisible(mVisibility[sActionName]);
+
+                        // Üres lista esetén egyik lejelentő gomb se legyen aktiválható,
+                        // függetlenül attól, hogy melyik funkcióhoz tartozik
+                        if (typeof oButton.setEnabled === "function") {
+                            console.log("[ButtonVisibility] setting", oButton.getId(), "enabled =", !bListEmpty);
+                            oButton.setEnabled(!bListEmpty);
+                        }
                     });
                 });
 
-                // Vízvágás köztes állapot: törlés/scan gombok tiltása v
-                var bLockListActions = bIsWaterjet && bWaterjetStarted;
-                console.log("[ListLock] bLockListActions:", bLockListActions);
+                // Köztes állapot: Vízvágás (FDLI) VAGY nyitott Steril napló esetén
+                // törlés/scan gombok tiltása — mindkettő explicit a saját function-type flagjéhez kötve
+                var bLockListActions = (bIsWaterjet && bWaterjetStarted) || (bIsSterilization && bSterilizationOpen);
+                console.log("[ListLock] bLockListActions:", bLockListActions,
+                    "(waterjet:", bWaterjetStarted, ", sterilization:", bSterilizationOpen, ")");
 
                 this._setListActionsEnabled(oTable, oView, !bLockListActions);
 
@@ -92,28 +106,36 @@ sap.ui.define([
             });
         },
 
-        // A lista első sorából olvassuk vissza a WaterjetStarted állapotot -
-        // mivel a lista mindig homogén állapotú, elég egy sort megnézni
-        _getWaterjetStarted: function (oSessionContext) {
+        // Egy lekérdezésben adja vissza, hogy üres-e a lista, és (ha nem üres) az első sor
+        // UserStatusShortText alapján, hogy a Vízvágás el van-e indítva (FDLI),
+        // illetve a NaploId alapján, hogy van-e nyitott Steril napló
+        _getOperationsState: function (oSessionContext) {
             var oModel = this.base.getModel();
             var oOperationsBinding = oModel.bindList("_Operations", oSessionContext);
 
             return oOperationsBinding.requestContexts(0, 1).then(function (aOpContexts) {
                 if (aOpContexts.length === 0) {
-                    return false;
+                    return { isEmpty: true, waterjetStarted: false, sterilizationOpen: false };
                 }
-                return aOpContexts[0].requestProperty("WjStarted").then(function () {
-                    return aOpContexts[0].getProperty("WjStarted") === "X";
+                return aOpContexts[0].requestProperty(["UserStatusShortText", "NaploId"]).then(function () {
+                    var sNaploId = aOpContexts[0].getProperty("NaploId");
+                    var iNaploId = parseInt(sNaploId, 10) || 0;
+                    console.log("[SterilizationCheck] raw NaploId value:", JSON.stringify(sNaploId), "parsed:", iNaploId);
+                    return {
+                        isEmpty: false,
+                        waterjetStarted: aOpContexts[0].getProperty("UserStatusShortText") === "FDLI",
+                        sterilizationOpen: iNaploId > 0
+                    };
                 });
+
             }).catch(function (oError) {
-                console.error("[Waterjet] state check error:", oError);
-                return false;
+                console.error("[Operations] state check error:", oError);
+                return { isEmpty: true, waterjetStarted: false, sterilizationOpen: false };
             });
         },
 
         // Törlés és beolvasás gombok engedélyezése/tiltása
         _setListActionsEnabled: function (oTable, oView, bEnabled) {
-            // Törlés: "deleteRow" custom action
             var aDeleteButtons = oTable.findAggregatedObjects(true, function (oControl) {
                 return oControl.getId && oControl.getId().indexOf("deleteRow") > -1
                     && typeof oControl.setEnabled === "function";
@@ -124,7 +146,6 @@ sap.ui.define([
                 oButton.setEnabled(bEnabled);
             });
 
-            // Beolvasás: "scanBarcode" custom action
             var aScanButtons = oTable.findAggregatedObjects(true, function (oControl) {
                 return oControl.getId && oControl.getId().indexOf("scanBarcode") > -1
                     && typeof oControl.setEnabled === "function";
