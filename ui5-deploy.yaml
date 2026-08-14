@@ -21,7 +21,7 @@ builder:
           name: ZMESCONFMASS
           description: zmesconfmass
           package: ZMES
-          transport: S4DK900156
+          transport: S4DK900336
         exclude:
           - /test/
           - /localService/

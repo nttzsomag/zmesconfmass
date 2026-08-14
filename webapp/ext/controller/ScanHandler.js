@@ -33,7 +33,7 @@ sap.ui.define([
                         // Egyelőre nem minden munkahelyhez van gép rendelve - engedjük tovább.
                         // Ha ez a jövőben kötelezővé válik, itt lehet majd hibát dobni, pl.:
                         // MessageBox.error("Nincs gép rendelve ehhez a munkahelyhez!", { title: "Hiba" });
-                        // return null; // ez blokkolná a scan-t
+                        //return null; // ez blokkolná a scan-t
                         return undefined;
                     }
 
@@ -113,7 +113,7 @@ sap.ui.define([
                 oHeaderContext
             );
             oAction.setParameter("barcode_value", sBarcode);
-            oAction.setParameter("equipment_id", sEquipmentId);
+            oAction.setParameter("equipment_id", sEquipmentId || "");
             oAction.execute().then(function () {
                 return oAction.getBoundContext().requestObject();
             }).then(function (oResult) {
