@@ -68,6 +68,13 @@
                 <Property Name="WorkEnd" Type="Edm.DateTimeOffset"/>
                 <Property Name="LocalLastChangedDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
                 <Property Name="WorkStartedCriticality" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="IsSterilization" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="IsAnodizing" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="IsLaserMarking" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="IsManualOp" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="IsMeo" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="IsLabeling" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="IsWaterjet" Type="Edm.String" Nullable="false" MaxLength="1"/>
                 <NavigationProperty Name="_AppNav" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.AppNavType)"/>
                 <NavigationProperty Name="_Operations" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)"/>
             </EntityType>
@@ -82,20 +89,50 @@
                 <Property Name="ToSemObj" Type="Edm.String" Nullable="false" MaxLength="30"/>
                 <Property Name="ToSemAction" Type="Edm.String" Nullable="false" MaxLength="60"/>
             </EntityType>
+            <EntityType Name="ComponentsType">
+                <Key>
+                    <PropertyRef Name="ManufacturingOrder"/>
+                    <PropertyRef Name="ManufacturingOrderSequence"/>
+                    <PropertyRef Name="ManufacturingOrderOperation"/>
+                    <PropertyRef Name="Reservation"/>
+                    <PropertyRef Name="ReservationItem"/>
+                    <PropertyRef Name="ReservationRecordType"/>
+                </Key>
+                <Property Name="ManufacturingOrder" Type="Edm.String" Nullable="false" MaxLength="12"/>
+                <Property Name="ManufacturingOrderSequence" Type="Edm.String" Nullable="false" MaxLength="6"/>
+                <Property Name="ManufacturingOrderOperation" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="Reservation" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ReservationItem" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="ReservationRecordType" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="CompId" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="18"/>
+                <Property Name="MatlCompRequirementDate" Type="Edm.Date"/>
+                <Property Name="BaseUnit" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="RequiredQuantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3"/>
+                <Property Name="WithdrawnQuantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3"/>
+                <Property Name="StorageLocation" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="Batch" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ReservationIsFinallyIssued" Type="Edm.Boolean" Nullable="false"/>
+            </EntityType>
             <EntityType Name="OperationType">
                 <Key>
                     <PropertyRef Name="ManufacturingOrder"/>
                     <PropertyRef Name="ManufacturingOrderSequence"/>
                     <PropertyRef Name="ManufacturingOrderOperation"/>
                     <PropertyRef Name="RelevantWorkCenterID"/>
+                    <PropertyRef Name="PersonnelNumber"/>
+                    <PropertyRef Name="UserName"/>
                 </Key>
                 <Property Name="ManufacturingOrder" Type="Edm.String" Nullable="false" MaxLength="12"/>
                 <Property Name="ManufacturingOrderSequence" Type="Edm.String" Nullable="false" MaxLength="6"/>
                 <Property Name="ManufacturingOrderOperation" Type="Edm.String" Nullable="false" MaxLength="4"/>
                 <Property Name="RelevantWorkCenterID" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="PersonnelNumber" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="UserName" Type="Edm.String" Nullable="false" MaxLength="12"/>
                 <Property Name="MfgOrderInternalID" Type="Edm.String" Nullable="false" MaxLength="10"/>
                 <Property Name="OrderOperationInternalID" Type="Edm.String" Nullable="false" MaxLength="8"/>
                 <Property Name="ProductDescription" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="EquipmentId" Type="Edm.String" Nullable="false" MaxLength="18"/>
                 <Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="18"/>
                 <Property Name="OperationDescription" Type="Edm.String" Nullable="false" MaxLength="40"/>
                 <Property Name="OperationControlProfile" Type="Edm.String" Nullable="false" MaxLength="4"/>
@@ -103,7 +140,6 @@
                 <Property Name="WorkCenterTypeCode" Type="Edm.String" Nullable="false" MaxLength="2"/>
                 <Property Name="RelevantWorkCenterCode" Type="Edm.String" Nullable="false" MaxLength="8"/>
                 <Property Name="WorkCenterID" Type="Edm.String" Nullable="false" MaxLength="8"/>
-                <Property Name="SourceType" Type="Edm.String" Nullable="false" MaxLength="4"/>
                 <Property Name="RelevantWorkCenterType" Type="Edm.String" Nullable="false" MaxLength="2"/>
                 <Property Name="Plant" Type="Edm.String" Nullable="false" MaxLength="4"/>
                 <Property Name="ObjectInternalID" Type="Edm.String" Nullable="false" MaxLength="22"/>
@@ -128,12 +164,53 @@
                 <Property Name="ActualExecutionStartTstmp" Type="Edm.DateTimeOffset"/>
                 <Property Name="ActualExecutionEndTstmp" Type="Edm.DateTimeOffset"/>
                 <Property Name="ActualDurationSeconds" Type="Edm.Decimal" Nullable="false" Precision="15"/>
+                <Property Name="InspectionLot" Type="Edm.String" Nullable="false" MaxLength="12"/>
+                <Property Name="WrkCtrStdValMaintRule1" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="WrkCtrStdValMaintRule2" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="WrkCtrStdValMaintRule3" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="RatUnit2" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="Ratval2" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3"/>
+                <Property Name="RatUnit3" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="Ratval3" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3"/>
+                <Property Name="NaploId" Type="Edm.String" Nullable="false" MaxLength="6"/>
                 <Property Name="OrderOperationBarcode" Type="Edm.String" Nullable="false" MaxLength="24"/>
                 <Property Name="__EntityControl" Type="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.EntityControl"/>
                 <Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.SAP__Message)" Nullable="false"/>
+                <NavigationProperty Name="_Components" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.ComponentsType)"/>
             </EntityType>
+            <EntityType Name="EquipmentType">
+                <Key>
+                    <PropertyRef Name="EquiEqunr"/>
+                    <PropertyRef Name="CrhdArbpl"/>
+                </Key>
+                <Property Name="EquiEqunr" Type="Edm.String" Nullable="false" MaxLength="18"/>
+                <Property Name="CrhdArbpl" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="CrhdObjty" Type="Edm.String" Nullable="false" MaxLength="2"/>
+                <Property Name="CrhdBegda" Type="Edm.Date"/>
+                <Property Name="CrhdEndda" Type="Edm.Date"/>
+                <Property Name="CrhdVerwe" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="EquzDatab" Type="Edm.Date"/>
+                <Property Name="EquzDatbi" Type="Edm.Date"/>
+                <Property Name="EquzEqlfn" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="EquzGewrk" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="CrtxKtext" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="EqktEqktx" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="EquiInbdt" Type="Edm.Date"/>
+                <Property Name="EquiAnsdt" Type="Edm.Date"/>
+                <Property Name="EquiAuldt" Type="Edm.Date"/>
+            </EntityType>
+            <ComplexType Name="ZP_MES_STER_PARAM">
+                <Property Name="CiklPar" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="Ciklusszg" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="Dokument" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="Mikrobio" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="Patron" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3"/>
+                <Property Name="PatronMe" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="SterUser" Type="Edm.String" Nullable="false" MaxLength="8"/>
+            </ComplexType>
             <ComplexType Name="EntityControl">
                 <Property Name="Deletable" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="Updatable" Type="Edm.Boolean" Nullable="false"/>
             </ComplexType>
             <ComplexType Name="SAP__Message">
                 <Property Name="code" Type="Edm.String" Nullable="false"/>
@@ -144,25 +221,109 @@
                 <Property Name="numericSeverity" Type="Edm.Byte" Nullable="false"/>
                 <Property Name="longtextUrl" Type="Edm.String"/>
             </ComplexType>
+            <Action Name="confirmMeo" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+            </Action>
+            <Action Name="confirmLabeling" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+            </Action>
+            <Action Name="confirmLaserMarking" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+            </Action>
+            <Action Name="confirmAnodizing" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+            </Action>
+            <Action Name="confirmSterilization" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <Parameter Name="CiklPar" Type="Edm.Boolean" Nullable="false"/>
+                <Parameter Name="Patron" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3"/>
+                <Parameter Name="PatronMe" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Parameter Name="SterUser" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Parameter Name="Mikrobio" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Parameter Name="Ciklusszg" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Parameter Name="Dokument" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <ReturnType Type="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType" Nullable="false"/>
+            </Action>
+            <Action Name="confirmWaterjet" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+            </Action>
+            <Action Name="startWaterjet" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+            </Action>
+            <Action Name="confirmManualOp" EntitySetPath="_it" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+            </Action>
             <Action Name="createByBarcode" EntitySetPath="_it" IsBound="true">
                 <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
                 <Parameter Name="barcode_value" Type="Edm.String" Nullable="false" MaxLength="50"/>
+                <Parameter Name="equipment_id" Type="Edm.String" Nullable="false" MaxLength="18"/>
                 <ReturnType Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
             </Action>
+            <Function Name="GetDfltsForConfSter" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType)" Nullable="false"/>
+                <ReturnType Type="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.ZP_MES_STER_PARAM" Nullable="false"/>
+            </Function>
             <EntityContainer Name="Container">
                 <EntitySet Name="AppNav" EntityType="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.AppNavType"/>
-                <EntitySet Name="Operation" EntityType="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType"/>
+                <EntitySet Name="Components" EntityType="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.ComponentsType"/>
+                <EntitySet Name="Equipment" EntityType="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.EquipmentType"/>
+                <EntitySet Name="Operation" EntityType="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType">
+                    <NavigationPropertyBinding Path="_Components" Target="Components"/>
+                </EntitySet>
                 <EntitySet Name="Session" EntityType="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.SessionType">
                     <NavigationPropertyBinding Path="_AppNav" Target="AppNav"/>
                     <NavigationPropertyBinding Path="_Operations" Target="Operation"/>
                 </EntitySet>
             </EntityContainer>
+            <Annotations Target="SAP__self.ZP_MES_STER_PARAM/CiklPar">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Ciklusszalag megfel"/>
+                <Annotation Term="SAP__common.Heading" String="Ciklusszalag alapján a paraméterek megfelelõek"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Ciklusszalag alapján a paraméterek megfelelõek"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZP_MES_STER_PARAM/Ciklusszg">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Ciklusszalag"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZP_MES_STER_PARAM/Dokument">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Dokumentum"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZP_MES_STER_PARAM/Mikrobio">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Mikrobiológiai lelet"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZP_MES_STER_PARAM/Patron">
+                <Annotation Term="SAP__measures.Unit" Path="PatronMe"/>
+                <Annotation Term="SAP__common.Label" String="Patron súlya(gramm)"/>
+                <Annotation Term="SAP__common.Heading" String="Patron súlya"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Patron súlya"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZP_MES_STER_PARAM/PatronMe">
+                <Annotation Term="SAP__common.IsUnit"/>
+                <Annotation Term="SAP__common.Label" String="Patron súly ME"/>
+                <Annotation Term="SAP__common.Heading" String="Patron súly mennyiségi egysége"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Patron súly mennyiségi egysége"/>
+            </Annotations>
             <Annotations Target="SAP__self.SessionType/UserName">
                 <Annotation Term="SAP__common.IsUpperCase"/>
                 <Annotation Term="SAP__common.Label" String="Felhasználó"/>
                 <Annotation Term="SAP__common.Heading" String="Felh. neve"/>
                 <Annotation Term="SAP__common.QuickInfo" String="Felhasználói név a felhasználói törzsben"/>
                 <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=XUBNAME"/>
+            </Annotations>
+            <Annotations Target="SAP__self.SessionType/UserFullName">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Teljes név"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Személy teljes neve"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=AD_NAMTEXT"/>
             </Annotations>
             <Annotations Target="SAP__self.SessionType/PersNumber">
                 <Annotation Term="SAP__common.IsDigitSequence"/>
@@ -174,20 +335,37 @@
             <Annotations Target="SAP__self.SessionType/EmpFullName">
                 <Annotation Term="SAP__common.Label" String="Név"/>
             </Annotations>
+            <Annotations Target="SAP__self.SessionType/EmpLastName">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Családnév"/>
+            </Annotations>
+            <Annotations Target="SAP__self.SessionType/EmpFirstName">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Utónév"/>
+            </Annotations>
             <Annotations Target="SAP__self.SessionType/WorkCenterId">
                 <Annotation Term="SAP__common.IsUpperCase"/>
                 <Annotation Term="SAP__common.Label" String="Munkahely"/>
                 <Annotation Term="SAP__common.Heading" String="Munkah."/>
                 <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ARBPL"/>
             </Annotations>
+            <Annotations Target="SAP__self.SessionType/WorkCenterText">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Leírás"/>
+                <Annotation Term="SAP__common.Heading" String="Rövid megnevezés"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Rövid megnevezés"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=CR_KTEXT"/>
+            </Annotations>
             <Annotations Target="SAP__self.SessionType/SessionStartDateTime">
                 <Annotation Term="SAP__common.Label" String="Bejelentkezés"/>
             </Annotations>
             <Annotations Target="SAP__self.SessionType/WorkStart">
                 <Annotation Term="SAP__common.Label" String="Munkaidő kezdete"/>
+                <Annotation Term="SAP__core.Computed"/>
             </Annotations>
             <Annotations Target="SAP__self.SessionType/WorkEnd">
                 <Annotation Term="SAP__common.Label" String="Munkaidő vége"/>
+                <Annotation Term="SAP__core.Computed"/>
             </Annotations>
             <Annotations Target="SAP__self.Container/Session">
                 <Annotation Term="SAP__capabilities.NavigationRestrictions">
@@ -341,6 +519,12 @@
                         </PropertyValue>
                     </Record>
                 </Annotation>
+                <Annotation Term="SAP__UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Tömeges gyártás lejelentés"/>
+                        <PropertyValue Property="TypeNamePlural" String="Tömeges lejelentések"/>
+                    </Record>
+                </Annotation>
                 <Annotation Term="SAP__UI.LineItem">
                     <Collection>
                         <Record Type="SAP__UI.DataField">
@@ -400,6 +584,231 @@
                     </Record>
                 </Annotation>
             </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/ManufacturingOrder">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_mfgorderstdvh/0001;ps='srvd-zui_mes_pp_massconf-0001';va='com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.et-zi_mes_pp_component.manufacturingorder'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Termelési rendelés"/>
+                <Annotation Term="SAP__common.Heading" String="Term.rend."/>
+                <Annotation Term="SAP__common.QuickInfo" String="Termelési rendelés azonosítója"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/ManufacturingOrderSequence">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_mfgordersequencestdvh/0001;ps='srvd-zui_mes_pp_massconf-0001';va='com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.et-zi_mes_pp_component.manufacturingordersequence'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Sorrend"/>
+                <Annotation Term="SAP__common.Heading" String="SRend"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=PLNFOLGE"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/ManufacturingOrderOperation">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_mfgordopbysemantickeystdvh/0001;ps='srvd-zui_mes_pp_massconf-0001';va='com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.et-zi_mes_pp_component.manufacturingorderoperation'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Művelet vagy fázis"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Művelet- vagy fázisszám"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/Reservation">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="Foglalás"/>
+                <Annotation Term="SAP__common.Heading" String="FoglalásSz"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Foglalás / másodlagos szükséglet száma"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=RSNUM"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/ReservationItem">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="Foglalási tétel"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/ReservationRecordType">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Foglalásrekord típusa"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/Material">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_productstdvh/0001;ps='srvd-zui_mes_pp_massconf-0001';va='com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.et-zi_mes_pp_component.material'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Anyag"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Anyagszám"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=MATNR"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/BaseUnit">
+                <Annotation Term="SAP__common.IsUnit"/>
+                <Annotation Term="SAP__common.Label" String="Alapmértékegység"/>
+                <Annotation Term="SAP__common.Heading" String="AME"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=MEINS"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/RequiredQuantity">
+                <Annotation Term="SAP__measures.Unit" Path="BaseUnit"/>
+                <Annotation Term="SAP__common.Label" String="Szükségletmennyiség"/>
+                <Annotation Term="SAP__common.Heading" String="Szüks.menny."/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=BDMNG"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/WithdrawnQuantity">
+                <Annotation Term="SAP__measures.Unit" Path="BaseUnit"/>
+                <Annotation Term="SAP__common.Label" String="Kivett mennyiség"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/StorageLocation">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Raktárhely"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType/Batch">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_batchstdvh/0001;ps='srvd-zui_mes_pp_massconf-0001';va='com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.et-zi_mes_pp_component.batch'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Sarzs"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Sarzsszám"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=CHARG_D"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ComponentsType">
+                <Annotation Term="SAP__common.Label" String="MES PP Komponens"/>
+                <Annotation Term="SAP__UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Komponens"/>
+                        <PropertyValue Property="TypeNamePlural" String="Komponensek"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="CompId"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Material"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="MatlCompRequirementDate"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="RequiredQuantity"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="WithdrawnQuantity"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="StorageLocation"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Batch"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ReservationIsFinallyIssued"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/Components">
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="RequiredQuantity"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="WithdrawnQuantity"/>
+                                    <PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container">
+                <Annotation Term="SAP__CodeList.UnitsOfMeasure">
+                    <Record>
+                        <PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="CollectionPath" String="UnitsOfMeasure"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+                <Annotation Term="SAP__capabilities.FilterFunctions">
+                    <Collection>
+                        <String>eq</String>
+                        <String>ne</String>
+                        <String>gt</String>
+                        <String>ge</String>
+                        <String>lt</String>
+                        <String>le</String>
+                        <String>and</String>
+                        <String>or</String>
+                        <String>contains</String>
+                        <String>startswith</String>
+                        <String>endswith</String>
+                        <String>any</String>
+                        <String>all</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SupportedFormats">
+                    <Collection>
+                        <String>application/json</String>
+                        <String>application/pdf</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__PDF.Features">
+                    <Record>
+                        <PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
+                        <PropertyValue Property="ArchiveFormat" Bool="true"/>
+                        <PropertyValue Property="Border" Bool="true"/>
+                        <PropertyValue Property="CoverPage" Bool="true"/>
+                        <PropertyValue Property="FitToPage" Bool="true"/>
+                        <PropertyValue Property="FontName" Bool="true"/>
+                        <PropertyValue Property="FontSize" Bool="true"/>
+                        <PropertyValue Property="HeaderFooter" Bool="true"/>
+                        <PropertyValue Property="IANATimezoneFormat" Bool="true"/>
+                        <PropertyValue Property="Margin" Bool="true"/>
+                        <PropertyValue Property="Padding" Bool="true"/>
+                        <PropertyValue Property="ResultSizeDefault" Int="20000"/>
+                        <PropertyValue Property="ResultSizeMaximum" Int="20000"/>
+                        <PropertyValue Property="Signature" Bool="true"/>
+                        <PropertyValue Property="TextDirectionLayout" Bool="true"/>
+                        <PropertyValue Property="Treeview" Bool="true"/>
+                        <PropertyValue Property="UploadToFileShare" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
+                <Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
+            </Annotations>
             <Annotations Target="SAP__self.OperationType/ManufacturingOrder">
                 <Annotation Term="SAP__core.Computed"/>
                 <Annotation Term="SAP__common.IsUpperCase"/>
@@ -425,6 +834,21 @@
                 <Annotation Term="SAP__common.Label" String="Munkahely belső ID"/>
                 <Annotation Term="SAP__common.QuickInfo" String="Munkahely belső azonosítója"/>
             </Annotations>
+            <Annotations Target="SAP__self.OperationType/PersonnelNumber">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="Szem.ügyi törzsszám"/>
+                <Annotation Term="SAP__common.Heading" String="SZTSZ"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Személyügyi törzsszám"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=PERSNO"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/UserName">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Felhasználó"/>
+                <Annotation Term="SAP__common.Heading" String="Felh. neve"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Felhasználói név a felhasználói törzsben"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=XUBNAME"/>
+            </Annotations>
             <Annotations Target="SAP__self.OperationType/MfgOrderInternalID">
                 <Annotation Term="SAP__common.IsDigitSequence"/>
                 <Annotation Term="SAP__common.Label" String="Rendelés belső ID"/>
@@ -440,6 +864,13 @@
                 <Annotation Term="SAP__UI.Hidden"/>
                 <Annotation Term="SAP__common.Label" String="Termékleírás"/>
                 <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=PRODUCTDESCRIPTION"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/EquipmentId">
+                <Annotation Term="SAP__common.Label" String="Gép"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Heading" String="Berendez."/>
+                <Annotation Term="SAP__common.QuickInfo" String="Berendezésszám"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=EQUNR"/>
             </Annotations>
             <Annotations Target="SAP__self.OperationType/Material">
                 <Annotation Term="SAP__common.Text" Path="ProductDescription"/>
@@ -580,10 +1011,146 @@
             <Annotations Target="SAP__self.OperationType/ActualDurationSeconds">
                 <Annotation Term="SAP__common.Label" String="Tényl. időtartam (mp)"/>
             </Annotations>
+            <Annotations Target="SAP__self.OperationType/InspectionLot">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="Vizsgálandó sorozat"/>
+                <Annotation Term="SAP__common.Heading" String="Vizsg.sor."/>
+                <Annotation Term="SAP__common.QuickInfo" String="Vizsgálandó sorozat száma"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=QPLOS"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/WrkCtrStdValMaintRule1">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Standard érték 1. karbantartási szabálya"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/WrkCtrStdValMaintRule2">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Standard érték 2. karbantartási szabálya"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/WrkCtrStdValMaintRule3">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Standard érték 3. karbantartási szabálya"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/RatUnit2">
+                <Annotation Term="SAP__common.IsUnit"/>
+                <Annotation Term="SAP__common.Label" String="Munkamenny.egysége 2"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Standard munkamennyiség egysége 2"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/Ratval2">
+                <Annotation Term="SAP__measures.Unit" Path="RatUnit2"/>
+                <Annotation Term="SAP__common.Label" String="Visszajelentett munkamennyiség 2"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Már visszajelentett munkamennyiség (tevékenység) 2"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/RatUnit3">
+                <Annotation Term="SAP__common.IsUnit"/>
+                <Annotation Term="SAP__common.Label" String="Munkamenny.egysége 3"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Standard munkamennyiség egysége 3"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/Ratval3">
+                <Annotation Term="SAP__measures.Unit" Path="RatUnit3"/>
+                <Annotation Term="SAP__common.Label" String="Visszajelentett munkamennyiség 3"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Már visszajelentett munkamennyiség (tevékenység) 3"/>
+            </Annotations>
+            <Annotations Target="SAP__self.OperationType/NaploId">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="Sterilizálási napló"/>
+                <Annotation Term="SAP__common.Heading" String="Sterilizálási napló száma"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Sterilizálási napló száma"/>
+            </Annotations>
             <Annotations Target="SAP__self.OperationType/__EntityControl">
                 <Annotation Term="SAP__core.Computed"/>
                 <Annotation Term="SAP__UI.HiddenFilter"/>
                 <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/Operation">
+                <Annotation Term="SAP__capabilities.NavigationRestrictions">
+                    <Record>
+                        <PropertyValue Property="RestrictedProperties">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="NavigationProperty" NavigationPropertyPath="_Components"/>
+                                    <PropertyValue Property="InsertRestrictions">
+                                        <Record>
+                                            <PropertyValue Property="Insertable" Bool="false"/>
+                                        </Record>
+                                    </PropertyValue>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="DeltaUpdateSupported" Bool="true"/>
+                        <PropertyValue Property="Updatable" Path="__EntityControl/Updatable"/>
+                        <PropertyValue Property="NonUpdatableNavigationProperties">
+                            <Collection>
+                                <PropertyPath>_Components</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeepUpdateSupport">
+                    <Record>
+                        <PropertyValue Property="ContentIDSupported" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Path="__EntityControl/Deletable"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))/CiklPar">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Ciklusszalag megfel"/>
+                <Annotation Term="SAP__common.Heading" String="Ciklusszalag alapján a paraméterek megfelelõek"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Ciklusszalag alapján a paraméterek megfelelõek"/>
+            </Annotations>
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))/Patron">
+                <Annotation Term="SAP__common.Label" String="Patron súlya(gramm)"/>
+                <Annotation Term="SAP__measures.Unit" Path="PatronMe"/>
+                <Annotation Term="SAP__common.Heading" String="Patron súlya"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Patron súlya"/>
+            </Annotations>
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))/Mikrobio">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Mikrobiológiai lelet"/>
+            </Annotations>
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))/Ciklusszg">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Ciklusszalag"/>
+            </Annotations>
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))/Dokument">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Dokumentum"/>
             </Annotations>
             <Annotations Target="SAP__self.OperationType">
                 <Annotation Term="SAP__common.Label" String="MES PP Tömeges Lejelentés"/>
@@ -617,17 +1184,7 @@
                         <Record Type="SAP__UI.ReferenceFacet">
                             <PropertyValue Property="Label" String="Komponensek"/>
                             <PropertyValue Property="ID" String="Components"/>
-                            <PropertyValue Property="Target" String="UI.FACET$7$">
-                                <Annotation Term="SAP__core.Messages">
-                                    <Collection>
-                                        <Record>
-                                            <PropertyValue Property="code" String="SY-530"/>
-                                            <PropertyValue Property="message" String="An exception was raised"/>
-                                            <PropertyValue Property="severity" String="error"/>
-                                        </Record>
-                                    </Collection>
-                                </Annotation>
-                            </PropertyValue>
+                            <PropertyValue Property="Target" AnnotationPath="_Components/@SAP__UI.LineItem"/>
                         </Record>
                     </Collection>
                 </Annotation>
@@ -699,6 +1256,9 @@
                                     <PropertyValue Property="Value" Path="ProductDescription"/>
                                 </Record>
                                 <Record Type="SAP__UI.DataField">
+                                    <PropertyValue Property="Value" Path="EquipmentId"/>
+                                </Record>
+                                <Record Type="SAP__UI.DataField">
                                     <PropertyValue Property="Value" Path="Material"/>
                                 </Record>
                             </Collection>
@@ -767,11 +1327,57 @@
                 </Annotation>
                 <Annotation Term="SAP__UI.LineItem">
                     <Collection>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Sterilizálás"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.confirmSterilization(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Anodizálás"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.confirmAnodizing(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Lézerjelölés"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.confirmLaserMarking(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Kézi művelet"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.confirmManualOp(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="MEO művelet"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.confirmMeo(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Cimkézés"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.confirmLabeling(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Vízvágás indítás"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.startWaterjet(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="Vízvágás befejezés"/>
+                            <PropertyValue Property="Action" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.confirmWaterjet(Collection(com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.OperationType))"/>
+                            <PropertyValue Property="InvocationGrouping" EnumMember="SAP__UI.OperationGroupingType/Isolated"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ManufacturingOrder"/>
+                        </Record>
                         <Record Type="SAP__UI.DataField">
                             <PropertyValue Property="Value" Path="ManufacturingOrderOperation"/>
                         </Record>
                         <Record Type="SAP__UI.DataField">
                             <PropertyValue Property="Value" Path="ProductDescription"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="EquipmentId"/>
                         </Record>
                         <Record Type="SAP__UI.DataField">
                             <PropertyValue Property="Value" Path="Material"/>
@@ -846,33 +1452,65 @@
                 </Annotation>
                 <Annotation Term="SAP__common.Messages" Path="SAP__Messages"/>
             </Annotations>
-            <Annotations Target="SAP__self.Container/Operation">
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))">
+                <Annotation Term="SAP__common.DefaultValuesFunction" String="com.sap.gateway.srvd.zui_mes_pp_massconf.v0001.GetDfltsForConfSter"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquiEqunr">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Berendezés"/>
+                <Annotation Term="SAP__common.Heading" String="Berendez."/>
+                <Annotation Term="SAP__common.QuickInfo" String="Berendezésszám"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=EQUNR"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/CrhdArbpl">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Munkahely"/>
+                <Annotation Term="SAP__common.Heading" String="Munkah."/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ARBPL"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/CrhdObjty">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Objektumtípus"/>
+                <Annotation Term="SAP__common.Heading" String="Típ"/>
+                <Annotation Term="SAP__common.QuickInfo" String="CIM erőforrás objektumtípusa"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=CR_OBJTY"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/CrhdVerwe">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Munkahelytípus"/>
+                <Annotation Term="SAP__common.Heading" String="Fjt."/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=AP_VERWE"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquzEqlfn">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="BerFelhasznAktuálSz"/>
+                <Annotation Term="SAP__common.Heading" String="BAS"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Berendezés felhasználás aktuális száma egy napon"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=EQLFN"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquzGewrk">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="Munkahely"/>
+                <Annotation Term="SAP__common.Heading" String="Munkah."/>
+                <Annotation Term="SAP__common.QuickInfo" String="Munkahely objektumazonosítója"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType">
+                <Annotation Term="SAP__common.Label" String="MES Berendezések"/>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/Equipment">
                 <Annotation Term="SAP__capabilities.SearchRestrictions">
                     <Record>
                         <PropertyValue Property="Searchable" Bool="false"/>
                     </Record>
                 </Annotation>
-                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
                     <Record>
-                        <PropertyValue Property="NonFilterableProperties">
-                            <Collection>
-                                <PropertyPath>__EntityControl</PropertyPath>
-                            </Collection>
-                        </PropertyValue>
-                    </Record>
-                </Annotation>
-                <Annotation Term="SAP__capabilities.SortRestrictions">
-                    <Record>
-                        <PropertyValue Property="NonSortableProperties">
-                            <Collection>
-                                <PropertyPath>__EntityControl</PropertyPath>
-                            </Collection>
-                        </PropertyValue>
+                        <PropertyValue Property="Insertable" Bool="false"/>
                     </Record>
                 </Annotation>
                 <Annotation Term="SAP__capabilities.DeleteRestrictions">
                     <Record>
-                        <PropertyValue Property="Deletable" Path="__EntityControl/Deletable"/>
+                        <PropertyValue Property="Deletable" Bool="false"/>
                     </Record>
                 </Annotation>
                 <Annotation Term="SAP__capabilities.UpdateRestrictions">
@@ -886,61 +1524,20 @@
                     </Record>
                 </Annotation>
             </Annotations>
-            <Annotations Target="SAP__self.Container">
-                <Annotation Term="SAP__CodeList.UnitsOfMeasure">
-                    <Record>
-                        <PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
-                        <PropertyValue Property="CollectionPath" String="UnitsOfMeasure"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
-                <Annotation Term="SAP__capabilities.FilterFunctions">
-                    <Collection>
-                        <String>eq</String>
-                        <String>ne</String>
-                        <String>gt</String>
-                        <String>ge</String>
-                        <String>lt</String>
-                        <String>le</String>
-                        <String>and</String>
-                        <String>or</String>
-                        <String>contains</String>
-                        <String>startswith</String>
-                        <String>endswith</String>
-                        <String>any</String>
-                        <String>all</String>
-                    </Collection>
-                </Annotation>
-                <Annotation Term="SAP__capabilities.SupportedFormats">
-                    <Collection>
-                        <String>application/json</String>
-                        <String>application/pdf</String>
-                    </Collection>
-                </Annotation>
-                <Annotation Term="SAP__PDF.Features">
-                    <Record>
-                        <PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
-                        <PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
-                        <PropertyValue Property="ArchiveFormat" Bool="true"/>
-                        <PropertyValue Property="Border" Bool="true"/>
-                        <PropertyValue Property="CoverPage" Bool="true"/>
-                        <PropertyValue Property="FitToPage" Bool="true"/>
-                        <PropertyValue Property="FontName" Bool="true"/>
-                        <PropertyValue Property="FontSize" Bool="true"/>
-                        <PropertyValue Property="HeaderFooter" Bool="true"/>
-                        <PropertyValue Property="IANATimezoneFormat" Bool="true"/>
-                        <PropertyValue Property="Margin" Bool="true"/>
-                        <PropertyValue Property="Padding" Bool="true"/>
-                        <PropertyValue Property="ResultSizeDefault" Int="20000"/>
-                        <PropertyValue Property="ResultSizeMaximum" Int="20000"/>
-                        <PropertyValue Property="Signature" Bool="true"/>
-                        <PropertyValue Property="TextDirectionLayout" Bool="true"/>
-                        <PropertyValue Property="Treeview" Bool="true"/>
-                        <PropertyValue Property="UploadToFileShare" Bool="true"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
-                <Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
+            <Annotations Target="SAP__self.createByBarcode(Collection(SAP__self.OperationType))/equipment_id">
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))/PatronMe">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Patron súly ME"/>
+                <Annotation Term="SAP__common.Heading" String="Patron súly mennyiségi egysége"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Patron súly mennyiségi egysége"/>
+            </Annotations>
+            <Annotations Target="SAP__self.confirmSterilization(Collection(SAP__self.OperationType))/SterUser">
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Sterilizálást végző"/>
+                <Annotation Term="SAP__common.Heading" String="Sterilizálást végző személy törzsszáma"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Sterilizálást végző személy törzsszáma"/>
             </Annotations>
             <Annotations Target="SAP__self.AppNavType/Title">
                 <Annotation Term="SAP__UI.HiddenFilter"/>
@@ -974,22 +1571,21 @@
             <Annotations Target="SAP__self.SessionType/WorkStartedCriticality">
                 <Annotation Term="SAP__UI.Hidden"/>
             </Annotations>
-            <Annotations Target="SAP__self.SessionType/UserFullName">
-                <Annotation Term="SAP__common.Label" String="Teljes név"/>
-                <Annotation Term="SAP__common.QuickInfo" String="Személy teljes neve"/>
-                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=AD_NAMTEXT"/>
+            <Annotations Target="SAP__self.ComponentsType/CompId">
+                <Annotation Term="SAP__common.Label" String="Tételszöveg"/>
+                <Annotation Term="SAP__common.Heading" String="Tételszöveg 1. sor"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Darabjegyzék tételszöveg (1. sor)"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=POTX1"/>
             </Annotations>
-            <Annotations Target="SAP__self.SessionType/EmpLastName">
-                <Annotation Term="SAP__common.Label" String="Családnév"/>
+            <Annotations Target="SAP__self.ComponentsType/MatlCompRequirementDate">
+                <Annotation Term="SAP__common.Label" String="Szükséglet dátuma"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Anyagkomponens - szükséglet dátuma"/>
             </Annotations>
-            <Annotations Target="SAP__self.SessionType/EmpFirstName">
-                <Annotation Term="SAP__common.Label" String="Utónév"/>
-            </Annotations>
-            <Annotations Target="SAP__self.SessionType/WorkCenterText">
-                <Annotation Term="SAP__common.Label" String="Leírás"/>
-                <Annotation Term="SAP__common.Heading" String="Rövid megnevezés"/>
-                <Annotation Term="SAP__common.QuickInfo" String="Rövid megnevezés"/>
-                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=CR_KTEXT"/>
+            <Annotations Target="SAP__self.ComponentsType/ReservationIsFinallyIssued">
+                <Annotation Term="SAP__common.Label" String="Utolsó kivét"/>
+                <Annotation Term="SAP__common.Heading" String="UF."/>
+                <Annotation Term="SAP__common.QuickInfo" String="Foglalás utolsó kivétje"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=KZEAR"/>
             </Annotations>
             <Annotations Target="SAP__self.OperationType/OperationDescription">
                 <Annotation Term="SAP__common.Label" String="Művelet szövege"/>
@@ -1001,7 +1597,67 @@
                 <Annotation Term="SAP__common.QuickInfo" String="Kód: a művelet egy mérföldkő"/>
                 <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=FLG_MST"/>
             </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/CrhdBegda">
+                <Annotation Term="SAP__common.Label" String="Kezdő dátum"/>
+                <Annotation Term="SAP__common.Heading" String="Kezdés"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=BEGDATUM"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/CrhdEndda">
+                <Annotation Term="SAP__common.Label" String="Befejezési dátum"/>
+                <Annotation Term="SAP__common.Heading" String="Vége"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ENDDATUM"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquzDatab">
+                <Annotation Term="SAP__common.Label" String="Érvényesség kezdete"/>
+                <Annotation Term="SAP__common.Heading" String="Érv.kezd."/>
+                <Annotation Term="SAP__common.QuickInfo" String="Érvényesség kezdetének dátuma"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=DATAB"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquzDatbi">
+                <Annotation Term="SAP__common.Label" String="Érvényesség vége"/>
+                <Annotation Term="SAP__common.Heading" String="Vége"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Érvényesség végének dátuma"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=DATBI"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/CrtxKtext">
+                <Annotation Term="SAP__common.Label" String="Leírás"/>
+                <Annotation Term="SAP__common.Heading" String="Rövid megnevezés"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Rövid megnevezés"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=CR_KTEXT"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EqktEqktx">
+                <Annotation Term="SAP__common.Label" String="Objektumleírás"/>
+                <Annotation Term="SAP__common.Heading" String="Műszaki objektum leírása"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Műszaki objektum leírása"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=KTX01"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquiInbdt">
+                <Annotation Term="SAP__common.Label" String="Ut.Karbant. Dátuma 1"/>
+                <Annotation Term="SAP__common.Heading" String="UtKarbD 1"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Utolsó Karbantartás Dátuma 1"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ILOM_DATAB"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquiAnsdt">
+                <Annotation Term="SAP__common.Label" String="Utolsó Karb. Dát. 7"/>
+                <Annotation Term="SAP__common.Heading" String="UtKa7"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Utolsó Karbantartás Dátuma 7"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EquipmentType/EquiAuldt">
+                <Annotation Term="SAP__common.Label" String="Ut.Karb.Dát 30"/>
+                <Annotation Term="SAP__common.Heading" String="UtKarbD30"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Utolsó Karb. Dátuma 30"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZP_MES_STER_PARAM/SterUser">
+                <Annotation Term="SAP__common.Label" String="Sterilizálást végző"/>
+                <Annotation Term="SAP__common.Heading" String="Sterilizálást végző személy törzsszáma"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Sterilizálást végző személy törzsszáma"/>
+            </Annotations>
             <Annotations Target="SAP__self.EntityControl/Deletable">
+                <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.EntityControl/Updatable">
                 <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
                 <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
                 <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
