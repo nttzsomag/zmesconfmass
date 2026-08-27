@@ -16,7 +16,30 @@ sap.ui.define([
                         change: this._onSessionContextChange.bind(this)
                     }
                 });
+
+                // --- AppNav: sortkattintás -> kereszt-alkalmazás navigálás ---
+                var sAppNavTableId = "zmesconfmass.zmesconfmass::SessionObjectPage--fe::table::_AppNav::LineItem";
+                var oAppNavTable = oView.byId(sAppNavTableId) || sap.ui.getCore().byId(sAppNavTableId);
+                if (oAppNavTable) {
+                    oAppNavTable.attachRowPress(this._onRowPress.bind(this));
+                }
             }
+        },
+
+        _onRowPress: function (oEvent) {
+            var oBindingContext = oEvent.getParameter("bindingContext");
+            if (!oBindingContext) return;
+
+            oBindingContext.requestProperty(["ToSemObj", "ToSemAction"])
+                .then(function (aValues) {
+                    var sToSemObj = aValues[0];
+                    var sToSemAction = aValues[1];
+                    if (sToSemObj && sToSemAction) {
+                        sap.ushell.Container.getService("CrossApplicationNavigation").toExternal({
+                            target: { semanticObject: sToSemObj, action: sToSemAction }
+                        });
+                    }
+                });
         },
 
         _onSessionContextChange: function () {
