@@ -47,6 +47,14 @@
           "localUri": "localService/mainService/metadata.xml",
           "odataVersion": "4.0"
         }
+      },
+      "gosService": {
+        "uri": "/sap/opu/odata4/sap/zui_gos_url_link_v4/srvd/sap/zui_gos_url_link/0001/",
+        "type": "OData",
+        "settings": {
+          "localUri": "localService/gosService/metadata.xml",
+          "odataVersion": "4.0"
+        }
       }
     }
   },
@@ -94,6 +102,13 @@
           "operationMode": "Server",
           "autoExpandSelect": true,
           "earlyRequests": true
+        }
+      },
+      "gosModel": {
+        "dataSource": "gosService",
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true
         }
       },
       "@i18n": {
@@ -156,6 +171,17 @@
                       "press": "zmesconfmass.zmesconfmass.ext.controller.ScanHandler.onDeleteRow",
                       "text": "Törlés",
                       "enabled": true
+                    }
+                  },
+                  "columns": {
+                    "gosColumn": {
+                      "header": "Dok.",
+                      "width": "3rem",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "DataField::Material"
+                      },
+                      "template": "zmesconfmass.zmesconfmass.ext.fragment.GosColumn"
                     }
                   }
                 }

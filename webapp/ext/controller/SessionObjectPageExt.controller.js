@@ -1,6 +1,14 @@
 sap.ui.define([
-    "sap/ui/core/mvc/ControllerExtension"
-], function (ControllerExtension) {
+    "sap/ui/core/mvc/ControllerExtension",
+    "sap/m/Dialog",
+    "sap/m/Table",
+    "sap/m/Column",
+    "sap/m/ColumnListItem",
+    "sap/m/ObjectIdentifier",
+    "sap/m/Button",
+    "sap/m/Text",
+    "sap/ui/model/Filter"
+], function (ControllerExtension, Dialog, Table, Column, ColumnListItem, ObjectIdentifier, Button, Text, Filter) {
     "use strict";
 
     return ControllerExtension.extend("zmesconfmass.zmesconfmass.ext.controller.SessionObjectPageExt", {
@@ -42,6 +50,82 @@ sap.ui.define([
                 });
         },
 
+        // ====== Csatolt dokumentumok - soronkénti ikon a _Operations táblában ======
+        onShowGosDocuments: function (oEvent) {
+            var oRowContext = oEvent.getSource().getBindingContext();
+            if (!oRowContext) {
+                console.warn("### DEBUG: onShowGosDocuments - nincs sor kontextus");
+                return;
+            }
+
+            oRowContext.requestProperty(["Material", "ProductDocumentNumber"]).then(function (aValues) {
+                var sMaterial = aValues[0];
+                var sProductDocumentNumber = aValues[1];
+
+                console.log("### DEBUG: onShowGosDocuments meghívva ###");
+                console.log(" -> Material érték:", sMaterial);
+                console.log(" -> ProductDocumentNumber érték:", sProductDocumentNumber);
+
+                var oTable = new Table({
+                    columns: [
+                        new Column({ header: new Text({ text: "Leírás" }) }),
+                        new Column({ header: new Text({ text: "Létrehozva" }) })
+                    ]
+                });
+
+                oTable.bindItems({
+                    path: "/GosUrlLink",
+                    model: "gosModel",
+                    filters: [
+                        new Filter("BoObjType", "EQ", "BUS1001006"),
+                        new Filter("BoObjKey", "EQ", sMaterial),
+                        new Filter("DescriptionUpper", "EQ", sProductDocumentNumber)
+                    ],
+                    parameters: {
+                        $select: "GuidId,Description,CreatedOn,Url"
+                    },
+                    template: new ColumnListItem({
+                        type: "Active",
+                        press: function (oItemEvent) {
+                            var oCtx = oItemEvent.getSource().getBindingContext("gosModel");
+                            var sUrl = oCtx.getProperty("Url");
+                            console.log(" -> sorra kattintva, URL:", sUrl);
+                            window.open(sUrl, "_blank");
+                        },
+                        cells: [
+                            new ObjectIdentifier({ title: "{gosModel>Description}" }),
+                            new Text({ text: "{gosModel>CreatedOn}" })
+                        ]
+                    }),
+                    events: {
+                        dataReceived: function (oDataEvent) {
+                            var oData = oDataEvent.getParameter("data");
+                            var oErr = oDataEvent.getParameter("error");
+                            if (oErr) {
+                                console.error("### DEBUG: GosUrlLink hívás hiba ###", oErr);
+                            } else {
+                                console.log("### DEBUG: GosUrlLink válasz megérkezett ###", oData);
+                            }
+                        }
+                    }
+                });
+
+                var oDialog = new Dialog({
+                    title: "Csatolt dokumentumok",
+                    contentWidth: "30rem",
+                    content: [oTable],
+                    beginButton: new Button({
+                        text: "Bezár",
+                        press: function () { oDialog.close(); }
+                    }),
+                    afterClose: function () { oDialog.destroy(); }
+                });
+
+                oEvent.getSource().addDependent(oDialog);
+                oDialog.open();
+            });
+        },
+
         _onSessionContextChange: function () {
             console.log("[ButtonVisibility] _onSessionContextChange fired");
 
@@ -78,10 +162,8 @@ sap.ui.define([
                 }.bind(this);
 
                 if (oTable.getRowBinding()) {
-                    // már van binding, mehet azonnal
                     fnSetupAndRefresh();
                 } else {
-                    // várjuk meg, amíg a tábla ténylegesen létrehozza a binding-ot
                     console.log("[ButtonVisibility] no row binding yet, waiting for bindingUpdated");
                     oTable.attachEventOnce("bindingUpdated", function () {
                         console.log("[ButtonVisibility] bindingUpdated fired");
@@ -92,77 +174,77 @@ sap.ui.define([
             }.bind(this));
         },
 
-_refreshButtonStates: function (oContext, oTable, oView) {
-    var aFlagNames = ["IsSterilization", "IsAnodizing", "IsLaserMarking",
-        "IsManualOp", "IsMeo", "IsLabeling", "IsWaterjet", "SupervisorApprovalRequired"];
+        _refreshButtonStates: function (oContext, oTable, oView) {
+            var aFlagNames = ["IsSterilization", "IsAnodizing", "IsLaserMarking",
+                "IsManualOp", "IsMeo", "IsLabeling", "IsWaterjet", "SupervisorApprovalRequired"];
 
-    Promise.all([
-        oContext.requestProperty(aFlagNames),
-        this._getOperationsState(oTable)
-    ]).then(function (aResults) {
-        console.log("[ButtonVisibility] flags loaded, operations state resolved");
+            Promise.all([
+                oContext.requestProperty(aFlagNames),
+                this._getOperationsState(oTable)
+            ]).then(function (aResults) {
+                console.log("[ButtonVisibility] flags loaded, operations state resolved");
 
-        var oOpsState = aResults[1];
-        var bWaterjetStarted = oOpsState.waterjetStarted;
-        var bSterilizationOpen = oOpsState.sterilizationOpen;
-        var bIsWaterjet = oContext.getProperty("IsWaterjet") === "X";
-        var bIsSterilization = oContext.getProperty("IsSterilization") === "X";
-        var bApprovalRequired = oContext.getProperty("SupervisorApprovalRequired") === true
-            || oContext.getProperty("SupervisorApprovalRequired") === "X";
+                var oOpsState = aResults[1];
+                var bWaterjetStarted = oOpsState.waterjetStarted;
+                var bSterilizationOpen = oOpsState.sterilizationOpen;
+                var bIsWaterjet = oContext.getProperty("IsWaterjet") === "X";
+                var bIsSterilization = oContext.getProperty("IsSterilization") === "X";
+                var bApprovalRequired = oContext.getProperty("SupervisorApprovalRequired") === true
+                    || oContext.getProperty("SupervisorApprovalRequired") === "X";
 
-        console.log("[ButtonVisibility] SupervisorApprovalRequired raw =",
-            JSON.stringify(oContext.getProperty("SupervisorApprovalRequired")), "-> bApprovalRequired =", bApprovalRequired);
+                console.log("[ButtonVisibility] SupervisorApprovalRequired raw =",
+                    JSON.stringify(oContext.getProperty("SupervisorApprovalRequired")), "-> bApprovalRequired =", bApprovalRequired);
 
-        var mVisibility = {
-            "confirmSterilization":       bIsSterilization && !bApprovalRequired,
-            "confirmSterilizationAppr":   bIsSterilization && bApprovalRequired,
+                var mVisibility = {
+                    "confirmSterilization":       bIsSterilization && !bApprovalRequired,
+                    "confirmSterilizationAppr":   bIsSterilization && bApprovalRequired,
 
-            "confirmAnodizing":           oContext.getProperty("IsAnodizing") === "X" && !bApprovalRequired,
-            "confirmAnodizingApprove":    oContext.getProperty("IsAnodizing") === "X" && bApprovalRequired,
+                    "confirmAnodizing":           oContext.getProperty("IsAnodizing") === "X" && !bApprovalRequired,
+                    "confirmAnodizingApprove":    oContext.getProperty("IsAnodizing") === "X" && bApprovalRequired,
 
-            "confirmLaserMarking":        oContext.getProperty("IsLaserMarking") === "X" && !bApprovalRequired,
-            "confirmLaserMarkingApprove": oContext.getProperty("IsLaserMarking") === "X" && bApprovalRequired,
+                    "confirmLaserMarking":        oContext.getProperty("IsLaserMarking") === "X" && !bApprovalRequired,
+                    "confirmLaserMarkingApprove": oContext.getProperty("IsLaserMarking") === "X" && bApprovalRequired,
 
-            "confirmManualOp":            oContext.getProperty("IsManualOp") === "X" && !bApprovalRequired,
-            "confirmManualOpApprove":     oContext.getProperty("IsManualOp") === "X" && bApprovalRequired,
+                    "confirmManualOp":            oContext.getProperty("IsManualOp") === "X" && !bApprovalRequired,
+                    "confirmManualOpApprove":     oContext.getProperty("IsManualOp") === "X" && bApprovalRequired,
 
-            "confirmMeo":                 oContext.getProperty("IsMeo") === "X" && !bApprovalRequired,
-            "confirmMeoApprove":          oContext.getProperty("IsMeo") === "X" && bApprovalRequired,
+                    "confirmMeo":                 oContext.getProperty("IsMeo") === "X" && !bApprovalRequired,
+                    "confirmMeoApprove":          oContext.getProperty("IsMeo") === "X" && bApprovalRequired,
 
-            "confirmLabeling":            oContext.getProperty("IsLabeling") === "X" && !bApprovalRequired,
-            "confirmLabelingApprove":     oContext.getProperty("IsLabeling") === "X" && bApprovalRequired,
+                    "confirmLabeling":            oContext.getProperty("IsLabeling") === "X" && !bApprovalRequired,
+                    "confirmLabelingApprove":     oContext.getProperty("IsLabeling") === "X" && bApprovalRequired,
 
-            "startWaterjet":              bIsWaterjet && !bWaterjetStarted && !bApprovalRequired,
-            "startWaterjetApprove":       bIsWaterjet && !bWaterjetStarted && bApprovalRequired,
+                    "startWaterjet":              bIsWaterjet && !bWaterjetStarted && !bApprovalRequired,
+                    "startWaterjetApprove":       bIsWaterjet && !bWaterjetStarted && bApprovalRequired,
 
-            "confirmWaterjet":            bIsWaterjet && bWaterjetStarted && !bApprovalRequired,
-            "confirmWaterjetApprove":     bIsWaterjet && bWaterjetStarted && bApprovalRequired
-        };
+                    "confirmWaterjet":            bIsWaterjet && bWaterjetStarted && !bApprovalRequired,
+                    "confirmWaterjetApprove":     bIsWaterjet && bWaterjetStarted && bApprovalRequired
+                };
 
-        console.log("[ButtonVisibility] computed visibility:", JSON.stringify(mVisibility));
+                console.log("[ButtonVisibility] computed visibility:", JSON.stringify(mVisibility));
 
-        var aAllActionButtons = oTable.findAggregatedObjects(true, function (oControl) {
-            return oControl.getId && oControl.getId().indexOf("DataFieldForAction") > -1;
-        });
+                var aAllActionButtons = oTable.findAggregatedObjects(true, function (oControl) {
+                    return oControl.getId && oControl.getId().indexOf("DataFieldForAction") > -1;
+                });
 
-        Object.keys(mVisibility).forEach(function (sActionName) {
-            var aButtons = aAllActionButtons.filter(function (oControl) {
-                return oControl.getId().indexOf(sActionName) > -1;
+                Object.keys(mVisibility).forEach(function (sActionName) {
+                    var aButtons = aAllActionButtons.filter(function (oControl) {
+                        return oControl.getId().indexOf(sActionName) > -1;
+                    });
+
+                    aButtons.forEach(function (oButton) {
+                        console.log("[ButtonVisibility] setting", oButton.getId(), "visible =", mVisibility[sActionName]);
+                        oButton.setVisible(mVisibility[sActionName]);
+                    });
+                });
+
+                var bLockListActions = (bIsWaterjet && bWaterjetStarted) || (bIsSterilization && bSterilizationOpen);
+                this._setListActionsEnabled(oTable, oView, !bLockListActions);
+
+            }.bind(this)).catch(function (oError) {
+                console.log("[ButtonVisibility] failed:", oError);
             });
-
-            aButtons.forEach(function (oButton) {
-                console.log("[ButtonVisibility] setting", oButton.getId(), "visible =", mVisibility[sActionName]);
-                oButton.setVisible(mVisibility[sActionName]);
-            });
-        });
-
-        var bLockListActions = (bIsWaterjet && bWaterjetStarted) || (bIsSterilization && bSterilizationOpen);
-        this._setListActionsEnabled(oTable, oView, !bLockListActions);
-
-    }.bind(this)).catch(function (oError) {
-        console.log("[ButtonVisibility] failed:", oError);
-    });
-},
+        },
 
         _getOperationsState: function (oTable) {
             console.log("[Operations] _getOperationsState called");

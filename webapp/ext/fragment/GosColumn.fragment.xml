@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+  <Button
+    id="gosDocumentsButton"
+    icon="sap-icon://attachment"
+    type="Transparent"
+    tooltip="Csatolt dokumentumok"
+    press=".extension.zmesconfmass.zmesconfmass.ext.controller.SessionObjectPageExt.onShowGosDocuments"
+  />
+</core:FragmentDefinition>
