@@ -38,15 +38,23 @@ sap.ui.define([
             var oBindingContext = oEvent.getParameter("bindingContext");
             if (!oBindingContext) return;
 
-            oBindingContext.requestProperty(["ToSemObj", "ToSemAction"])
+            oBindingContext.requestProperty(["ToSemObj", "ToSemAction", "ToGroupId"])
                 .then(function (aValues) {
                     var sToSemObj = aValues[0];
                     var sToSemAction = aValues[1];
-                    if (sToSemObj && sToSemAction) {
-                        sap.ushell.Container.getService("CrossApplicationNavigation").toExternal({
-                            target: { semanticObject: sToSemObj, action: sToSemAction }
-                        });
+                    var sToGroupId = aValues[2];
+
+                    if (!sToSemObj || !sToSemAction) return;
+
+                    var oNavArgs = {
+                        target: { semanticObject: sToSemObj, action: sToSemAction }
+                    };
+
+                    if (sToGroupId) {
+                        oNavArgs.params = { GroupId: sToGroupId };
                     }
+
+                    sap.ushell.Container.getService("CrossApplicationNavigation").toExternal(oNavArgs);
                 });
         },
 
@@ -196,29 +204,29 @@ sap.ui.define([
                     JSON.stringify(oContext.getProperty("SupervisorApprovalRequired")), "-> bApprovalRequired =", bApprovalRequired);
 
                 var mVisibility = {
-                    "confirmSterilization":       bIsSterilization && !bApprovalRequired,
-                    "confirmSterilizationAppr":   bIsSterilization && bApprovalRequired,
+                    "confirmSterilization": bIsSterilization && !bApprovalRequired,
+                    "confirmSterilizationAppr": bIsSterilization && bApprovalRequired,
 
-                    "confirmAnodizing":           oContext.getProperty("IsAnodizing") === "X" && !bApprovalRequired,
-                    "confirmAnodizingApprove":    oContext.getProperty("IsAnodizing") === "X" && bApprovalRequired,
+                    "confirmAnodizing": oContext.getProperty("IsAnodizing") === "X" && !bApprovalRequired,
+                    "confirmAnodizingApprove": oContext.getProperty("IsAnodizing") === "X" && bApprovalRequired,
 
-                    "confirmLaserMarking":        oContext.getProperty("IsLaserMarking") === "X" && !bApprovalRequired,
+                    "confirmLaserMarking": oContext.getProperty("IsLaserMarking") === "X" && !bApprovalRequired,
                     "confirmLaserMarkingApprove": oContext.getProperty("IsLaserMarking") === "X" && bApprovalRequired,
 
-                    "confirmManualOp":            oContext.getProperty("IsManualOp") === "X" && !bApprovalRequired,
-                    "confirmManualOpApprove":     oContext.getProperty("IsManualOp") === "X" && bApprovalRequired,
+                    "confirmManualOp": oContext.getProperty("IsManualOp") === "X" && !bApprovalRequired,
+                    "confirmManualOpApprove": oContext.getProperty("IsManualOp") === "X" && bApprovalRequired,
 
-                    "confirmMeo":                 oContext.getProperty("IsMeo") === "X" && !bApprovalRequired,
-                    "confirmMeoApprove":          oContext.getProperty("IsMeo") === "X" && bApprovalRequired,
+                    "confirmMeo": oContext.getProperty("IsMeo") === "X" && !bApprovalRequired,
+                    "confirmMeoApprove": oContext.getProperty("IsMeo") === "X" && bApprovalRequired,
 
-                    "confirmLabeling":            oContext.getProperty("IsLabeling") === "X" && !bApprovalRequired,
-                    "confirmLabelingApprove":     oContext.getProperty("IsLabeling") === "X" && bApprovalRequired,
+                    "confirmLabeling": oContext.getProperty("IsLabeling") === "X" && !bApprovalRequired,
+                    "confirmLabelingApprove": oContext.getProperty("IsLabeling") === "X" && bApprovalRequired,
 
-                    "startWaterjet":              bIsWaterjet && !bWaterjetStarted && !bApprovalRequired,
-                    "startWaterjetApprove":       bIsWaterjet && !bWaterjetStarted && bApprovalRequired,
+                    "startWaterjet": bIsWaterjet && !bWaterjetStarted && !bApprovalRequired,
+                    "startWaterjetApprove": bIsWaterjet && !bWaterjetStarted && bApprovalRequired,
 
-                    "confirmWaterjet":            bIsWaterjet && bWaterjetStarted && !bApprovalRequired,
-                    "confirmWaterjetApprove":     bIsWaterjet && bWaterjetStarted && bApprovalRequired
+                    "confirmWaterjet": bIsWaterjet && bWaterjetStarted && !bApprovalRequired,
+                    "confirmWaterjetApprove": bIsWaterjet && bWaterjetStarted && bApprovalRequired
                 };
 
                 console.log("[ButtonVisibility] computed visibility:", JSON.stringify(mVisibility));
