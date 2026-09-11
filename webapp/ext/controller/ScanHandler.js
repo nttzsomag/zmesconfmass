@@ -6,8 +6,9 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/m/SelectDialog",
     "sap/m/StandardListItem",
-    "sap/ui/model/Filter"
-], function (Dialog, Input, Button, MessageToast, MessageBox, SelectDialog, StandardListItem, Filter) {
+    "sap/ui/model/Filter",
+    "zmesconfmass/zmesconfmass/ext/controller/GosDialogHelper"
+], function (Dialog, Input, Button, MessageToast, MessageBox, SelectDialog, StandardListItem, Filter, GosDialogHelper) {
     "use strict";
 
     // ====== Gép feloldása - üres lista esetén megkérdez, egyébként a meglévő sorból olvas vissza ======
@@ -173,6 +174,53 @@ sap.ui.define([
                         MessageBox.error("Hiba törlés közben: " + oError.message);
                     });
                 }
+            });
+        },
+
+        // ====== Karbantartási utasítás - egyetlen táblaszintű gomb, mert minden felvitt tétel ugyanahhoz a géphez tartozik ======
+        onShowMaintenanceInstruction: function (aContexts) {
+            var oSessionContext = Array.isArray(aContexts) ? aContexts[0] : aContexts;
+
+            if (!oSessionContext) {
+                MessageBox.error("Nem található Session kontextus.");
+                return;
+            }
+
+            var oModel = oSessionContext.getModel();
+            var oOperationsBinding = oModel.bindList("_Operations", oSessionContext);
+
+            oOperationsBinding.requestContexts(0, 1).then(function (aOpContexts) {
+                if (aOpContexts.length === 0) {
+                    MessageToast.show("Még nincs beolvasott tétel.");
+                    return;
+                }
+
+                return aOpContexts[0].requestProperty("EquipmentId").then(function (sEquipmentId) {
+                    console.log("### DEBUG: onShowMaintenanceInstruction - EquipmentId nyers érték:", sEquipmentId,
+                        "| hossz:", sEquipmentId ? sEquipmentId.length : 0);
+
+                    if (!sEquipmentId) {
+                        MessageToast.show("A beolvasott tételekhez nincs gép rendelve.");
+                        return;
+                    }
+
+                    var sPaddedId = ("000000000000000000" + sEquipmentId).slice(-18);
+                    console.log("### DEBUG: onShowMaintenanceInstruction - paddelt EquipmentId:", sPaddedId);
+
+                    var oView = sap.ui.core.Element.registry.get("zmesconfmass.zmesconfmass::SessionObjectPage");
+                    if (!oView) {
+                        console.warn("### DEBUG: onShowMaintenanceInstruction - a SessionObjectPage View nem található");
+                        return;
+                    }
+
+                    GosDialogHelper.showDialog(oView, [
+                        new Filter("BoObjType", "EQ", "EQUI"),
+                        new Filter("BoObjKey", "EQ", sPaddedId)
+                    ], "Karbantartási utasítás");
+                });
+            }).catch(function (oError) {
+                console.error("[Maintenance] error:", oError);
+                MessageBox.error("Nem sikerült lekérni a berendezést.");
             });
         }
     };
