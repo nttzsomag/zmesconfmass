@@ -96,8 +96,6 @@ sap.ui.define([
 
             oTable.initialized().then(function () {
 
-                this._setMaintenanceIconOnce(oTable);
-
                 var fnSetupAndRefresh = function () {
                     var oRowBinding = oTable.getRowBinding();
                     console.log("[ButtonVisibility] oRowBinding after bindingUpdated:", oRowBinding);
@@ -245,26 +243,6 @@ sap.ui.define([
                 return { waterjetStarted: false, sterilizationOpen: false };
             });
         },
-
-        _setMaintenanceIconOnce: function (oTable) {
-            if (oTable.__maintenanceIconSet) { return; }
-
-            var aButtons = oTable.findAggregatedObjects(true, function (oControl) {
-                return oControl.getId && oControl.getId().indexOf("showMaintenanceInstruction") > -1
-                    && typeof oControl.setIcon === "function";
-            });
-
-            if (aButtons.length) {
-                aButtons.forEach(function (oButton) {
-                    oButton.setIcon("sap-icon://wrench");
-                });
-                oTable.__maintenanceIconSet = true;
-                console.log("### DEBUG: Karbantartási utasítás gomb ikonja beállítva");
-            } else {
-                console.warn("### DEBUG: Karbantartási utasítás gomb NEM található ikon-beállításhoz");
-            }
-        },
-
 
         _setListActionsEnabled: function (oTable, oView, bEnabled) {
             var aDeleteButtons = oTable.findAggregatedObjects(true, function (oControl) {

@@ -171,12 +171,6 @@
                       "press": "zmesconfmass.zmesconfmass.ext.controller.ScanHandler.onDeleteRow",
                       "text": "Törlés",
                       "enabled": true
-                    },
-                    "showMaintenanceInstruction": {
-                      "press": "zmesconfmass.zmesconfmass.ext.controller.ScanHandler.onShowMaintenanceInstruction",
-                      "text": "Karbantartási utasítás",
-                      "icon": "sap-icon://wrench",
-                      "enabled": true
                     }
                   },
                   "columns": {
