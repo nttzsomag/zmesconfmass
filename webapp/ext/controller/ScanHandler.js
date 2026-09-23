@@ -132,6 +132,43 @@ sap.ui.define([
         }
     }
 
+    // ====== Ellenőrzési művelet (ZMESInspectionOperation) kulcsainak lekérdezése ======
+    // ManufacturingOrder + ManufacturingOrderOperation alapján, ugyanaz a séma mint a
+    // zmesconfsingle appban - nyers fetch()-csel hívjuk a zui_mes_insp_oper_v4 service-t,
+    // hogy ne kelljen egy külön regisztrált named model-t bekötni ehhez a statikus modulhoz.
+    function escapeODataStringLiteral(vValue) {
+        return String(vValue).replace(/'/g, "''");
+    }
+
+    function getInspectionKeys(sManufacturingOrder, sManufacturingOrderOperation) {
+        var sFilter = "ManufacturingOrder eq '" + escapeODataStringLiteral(sManufacturingOrder)
+            + "' and ManufacturingOrderOperation eq '" + escapeODataStringLiteral(sManufacturingOrderOperation)
+            + "' and IsActiveEntity eq true";
+
+        var sUrl = "/sap/opu/odata4/sap/zui_mes_insp_oper_v4/srvd/sap/zui_mes_insp_oper/0001/InspectionOperations"
+            + "?$filter=" + encodeURIComponent(sFilter)
+            + "&$select=InspectionLot,InspPlanOperationInternalID&$top=1";
+
+        return fetch(sUrl, {
+            headers: { "Accept": "application/json" },
+            credentials: "same-origin"
+        }).then(function (oResponse) {
+            if (!oResponse.ok) {
+                throw new Error("HTTP " + oResponse.status);
+            }
+            return oResponse.json();
+        }).then(function (oData) {
+            var aValues = (oData && oData.value) || [];
+            if (aValues.length === 0) {
+                return null;
+            }
+            return {
+                InspectionLot: aValues[0].InspectionLot,
+                InspPlanOperationInternalID: aValues[0].InspPlanOperationInternalID
+            };
+        });
+    }
+
     return {
         onScanBarcode: function (aContexts) {
             var oSessionContext = Array.isArray(aContexts) ? aContexts[0] : aContexts;
@@ -174,6 +211,51 @@ sap.ui.define([
                     });
                 }
             });
+        },
+
+        // ====== Mérési eredmények rögzítése - a kijelölt (kizárólag egy) tételre navigál ======
+        onNavigateToInspectionOperation: function (oTableContext, aSelectedContexts) {
+            if (!aSelectedContexts || aSelectedContexts.length === 0) {
+                MessageBox.error("Nincs kijelölt sor.");
+                return;
+            }
+
+            if (aSelectedContexts.length > 1) {
+                MessageBox.error("Csak egy tételt lehet kijelölni a mérési eredmények rögzítéséhez.");
+                return;
+            }
+
+            var oRowContext = aSelectedContexts[0];
+
+            oRowContext.requestProperty(["ManufacturingOrder", "ManufacturingOrderOperation"])
+                .then(function (aValues) {
+                    var sManufacturingOrder = aValues[0];
+                    var sManufacturingOrderOperation = aValues[1];
+
+                    return getInspectionKeys(sManufacturingOrder, sManufacturingOrderOperation);
+                })
+                .then(function (oKeys) {
+                    if (!oKeys || !oKeys.InspectionLot || !oKeys.InspPlanOperationInternalID) {
+                        MessageBox.information("Nem található ellenőrzési művelet ehhez a tételhez.");
+                        return;
+                    }
+
+                    var sAppSpecificRoute = "&/InspectionOperations(InspectionLot='" + oKeys.InspectionLot
+                        + "',InspPlanOperationInternalID='" + oKeys.InspPlanOperationInternalID
+                        + "',IsActiveEntity=true)";
+
+                    sap.ushell.Container.getService("CrossApplicationNavigation").toExternal({
+                        target: {
+                            semanticObject: "ZMESInspectionOperation",
+                            action: "manageLineItems"
+                        },
+                        appSpecificRoute: sAppSpecificRoute
+                    });
+                })
+                .catch(function (oError) {
+                    console.error("[onNavigateToInspectionOperation] Hiba:", oError);
+                    MessageBox.error("Hiba történt az ellenőrzési művelet keresése közben.");
+                });
         }
 
     };

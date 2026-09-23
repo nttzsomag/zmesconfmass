@@ -171,6 +171,12 @@
                       "press": "zmesconfmass.zmesconfmass.ext.controller.ScanHandler.onDeleteRow",
                       "text": "Törlés",
                       "enabled": true
+                    },
+                    "navigateToInspectionOperation": {
+                      "press": "zmesconfmass.zmesconfmass.ext.controller.ScanHandler.onNavigateToInspectionOperation",
+                      "text": "Mérési eredmények rögzítése",
+                      "requiresSelection": true,
+                      "enabled": true
                     }
                   },
                   "columns": {
